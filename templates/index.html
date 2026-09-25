@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Etiquetas de Envio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Variáveis de Cores - Tema Claro (Padrão) */
+        :root {
+            --bg-page: #cbd5e1;
+            --card-bg: #ffffff;
+            --card-border: #94a3b8;
+            --section-title: #334155;
+            --border-divider: #e2e8f0;
+            --footer-bg: #f1f5f9;
+            --preview-bg: #f8fafc;
+            --opt-card-bg: #ffffff;
+            --opt-card-border: #cbd5e1;
+            --opt-card-hover: #3b82f6;
+        }
+
+        /* Variáveis de Cores - Tema Escuro */
+        [data-bs-theme="dark"] {
+            --bg-page: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --section-title: #e2e8f0;
+            --border-divider: #334155;
+            --footer-bg: #0f172a;
+            --preview-bg: #1e293b;
+            --opt-card-bg: #1e293b;
+            --opt-card-border: #475569;
+            --opt-card-hover: #60a5fa;
+        }
+
+        body { 
+            background-color: var(--bg-page);
+            transition: background-color 0.25s ease;
+        }
+
+        .card-custom { 
+            background-color: var(--card-bg);
+            border-radius: 12px; 
+            border: 1px solid var(--card-border); 
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); 
+            transition: background-color 0.25s ease, border-color 0.25s ease;
+        }
+
+        .section-header { 
+            font-size: 1.05rem; 
+            font-weight: 600; 
+            color: var(--section-title); 
+            margin-bottom: 12px; 
+            border-bottom: 2px solid var(--border-divider); 
+            padding-bottom: 6px; 
+        }
+
+        .footer-action {
+            background-color: var(--footer-bg);
+            border: 1px solid var(--border-divider);
+        }
+
+        .required-star {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        .logo-preview-box {
+            border: 2px dashed var(--card-border);
+            border-radius: 8px;
+            background-color: var(--preview-bg);
+            padding: 14px;
+            text-align: center;
+        }
+
+        /* Botão 'Escolher Arquivo' Super Destacado */
+        .btn-file-highlight {
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 2px solid #2563eb !important;
+            background-color: #eff6ff !important;
+            color: #1e40af !important;
+            padding: 8px 12px;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);
+            cursor: pointer;
+        }
+
+        .btn-file-highlight:focus {
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.35);
+        }
+
+        /* Destaque no botão em Modo Escuro */
+        [data-bs-theme="dark"] .btn-file-highlight {
+            background-color: #1e3a8a !important;
+            color: #bfdbfe !important;
+            border-color: #60a5fa !important;
+        }
+
+        .btn-file-highlight::file-selector-button {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 18px;
+            margin-right: 14px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-file-highlight::file-selector-button:hover {
+            background-color: #1d4ed8 !important;
+            transform: scale(1.02);
+        }
+
+        [data-bs-theme="dark"] .btn-file-highlight::file-selector-button {
+            background-color: #3b82f6 !important;
+        }
+
+        .layout-option-card {
+            border: 2px solid var(--opt-card-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: var(--opt-card-bg);
+        }
+
+        .layout-option-card:hover {
+            border-color: var(--opt-card-hover);
+        }
+
+        .form-check-input:checked ~ .layout-content {
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        [data-bs-theme="dark"] .form-check-input:checked ~ .layout-content {
+            color: #60a5fa;
+        }
+
+        /* Botão de Alternância de Tema */
+        .theme-toggle-btn {
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4 my-2">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            
+            <div class="card card-custom p-4 mb-4">
+                
+                <!-- CABEÇALHO COM BADGE E BOTÃO DE TEMA -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <div>
+                        <h3 class="fw-bold m-0">Gerador de Etiquetas de Envio</h3>
+                        <p class="text-secondary m-0 small">Preencha os campos obrigatórios (<span class="required-star">*</span>) e selecione o formato da folha A4.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Alternador de Tema Claro / Escuro -->
+                        <button type="button" class="btn btn-outline-secondary theme-toggle-btn" id="themeToggle" title="Alternar entre modo claro e escuro">
+                            <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                            <span id="themeText">Modo Escuro</span>
+                        </button>
+                        <!-- Badge em Vermelho -->
+                        <span class="badge bg-danger px-3 py-2 fs-6">Formato PDF</span>
+                    </div>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-danger">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="/" enctype="multipart/form-data">
+                    
+                    <!-- SELEÇÃO DE LAYOUT / MODO DA FOLHA A4 -->
+                    <div class="section-header mt-2">
+                        <i class="bi bi-printer text-primary me-1"></i> Formato de Impressão na Folha A4
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="layout-option-card d-flex align-items-center w-100" for="mode_2x">
+                                <input class="form-check-input mt-0 me-2" type="radio" name="layout_mode" id="mode_2x" value="2x" {% if data.layout_mode != '1x' %}checked{% endif %}>
+                                <div class="layout-content">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-files text-primary fs-5 me-2"></i>
+                                        <span>2 Etiquetas por Folha (Dividida ao Meio)</span>
+                                    </div>
+                                    <small class="text-secondary d-block ms-4">Duas vias iguais com linha de corte pontilhada.</small>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="layout-option-card d-flex align-items-center w-100" for="mode_1x">
+                                <input class="form-check-input mt-0 me-2" type="radio" name="layout_mode" id="mode_1x" value="1x" {% if data.layout_mode == '1x' %}checked{% endif %}>
+                                <div class="layout-content">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark text-primary fs-5 me-2"></i>
+                                        <span>1 Etiqueta Grande (Folha Inteira)</span>
+                                    </div>
+                                    <small class="text-secondary d-block ms-4">Preenchimento amplo na página A4 para pacotes grandes.</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- UPLOAD LOGOTIPO COM BOTÃO DESTACADO -->
+                    <div class="section-header">
+                        <i class="bi bi-image text-primary me-1"></i> Logotipo da Empresa (Posicionado no Topo)
+                    </div>
+                    <div class="logo-preview-box mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8 text-start">
+                                <label class="form-label small fw-bold mb-1 text-primary">
+                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Selecionar Imagem do Logotipo (Opcional)
+                                </label>
+                                <!-- Campo de Upload com Botão Destacado -->
+                                <input class="form-control btn-file-highlight" type="file" name="logo" id="logoInput" accept=".png,.jpg,.jpeg">
+                                <span class="text-secondary small d-block mt-1">Formatos suportados: <strong>PNG, JPG ou JPEG</strong>. Redimensionado automaticamente.</span>
+                            </div>
+                            <div class="col-md-4 text-center mt-3 mt-md-0">
+                                <img id="logoPreview" src="#" alt="Prévia do Logo" style="max-height: 60px; max-width: 100%; display: none;" class="img-fluid rounded border p-1 bg-white">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DESTINATÁRIO -->
+                    <div class="section-header">
+                        <i class="bi bi-geo-alt-fill text-primary me-1"></i> Dados do Destinatário
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label small fw-semibold">Destinatário / Razão Social <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="dest_nome" value="{{ data.dest_nome }}" maxlength="50" required placeholder="Nome ou razão social completa">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">CNPJ / CPF <span class="required-star">*</span></label>
+                            <input type="text" class="form-control cnpj-mask" name="dest_cnpj" value="{{ data.dest_cnpj }}" inputmode="numeric" required placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small fw-semibold">Endereço Completo <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="dest_endereco" value="{{ data.dest_endereco }}" maxlength="50" required placeholder="Logradouro, número, complemento">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Bairro <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="dest_bairro" value="{{ data.dest_bairro }}" required placeholder="Bairro">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold">Cidade <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="dest_cidade" value="{{ data.dest_cidade }}" maxlength="20" required placeholder="Cidade">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-semibold">UF <span class="required-star">*</span></label>
+                            <select class="form-select" name="dest_uf" required>
+                                <option value="" disabled {% if not data.dest_uf %}selected{% endif %}>Selecione o Estado...</option>
+                                {% for sigla, nome in estados %}
+                                    <option value="{{ sigla }}" {% if data.dest_uf == sigla %}selected{% endif %}>{{ nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">CEP <span class="required-star">*</span></label>
+                            <input type="text" class="form-control cep-mask" name="dest_cep" value="{{ data.dest_cep }}" inputmode="numeric" required placeholder="00000-000">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">Telefone / Pessoa de Contato (Opcional)</label>
+                            <input type="text" class="form-control fone-mask" name="dest_fone" value="{{ data.dest_fone }}" inputmode="numeric" placeholder="(00) 0 0000-0000">
+                        </div>
+                    </div>
+
+                    <!-- CARGA / NOTA FISCAL -->
+                    <div class="section-header mt-4">
+                        <i class="bi bi-box-seam-fill text-warning me-1"></i> Dados da Mercadoria
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Número da Nota Fiscal (NF) <span class="required-star">*</span></label>
+                            <input type="text" class="form-control only-numbers" name="nf_num" value="{{ data.nf_num }}" inputmode="numeric" required placeholder="Ex.: 12345">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Valor Declarado (R$) <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="nf_valor" value="{{ data.nf_valor }}" required placeholder="Ex.: 1.500,00">
+                        </div>
+                    </div>
+
+                    <!-- REMETENTE -->
+                    <div class="section-header mt-4">
+                        <i class="bi bi-building text-secondary me-1"></i> Dados do Remetente
+                    </div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-7">
+                            <label class="form-label small fw-semibold">Empresa Remetente <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="rem_empresa" value="{{ data.rem_empresa }}" maxlength="50" required placeholder="Razão social da empresa remetente">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold">CNPJ Remetente <span class="required-star">*</span></label>
+                            <input type="text" class="form-control cnpj-mask" name="rem_cnpj" value="{{ data.rem_cnpj }}" inputmode="numeric" required placeholder="00.000.000/0000-00">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-semibold">Endereço e Contato do Remetente <span class="required-star">*</span></label>
+                            <input type="text" class="form-control" name="rem_endereco" value="{{ data.rem_endereco }}" maxlength="50" required placeholder="Rua, número, cidade/UF, CEP e telefone do remetente">
+                        </div>
+                    </div>
+
+                    <!-- AÇÃO / SUBMISSÃO -->
+                    <div class="d-flex justify-content-between align-items-center footer-action p-3 rounded">
+                        <div class="text-secondary small">
+                            <i class="bi bi-filetype-pdf text-danger fs-5 align-middle me-1"></i>
+                            Saída em <strong>PDF A4</strong> de acordo com a opção selecionada.
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> Gerar Etiqueta em PDF
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------------------------------------
+    // CONTROLE DE MODO CLARO / MODO ESCURO COM LOCALSTORAGE
+    // -------------------------------------------------------------
+    const htmlElem = document.documentElement;
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    function applyTheme(theme) {
+        htmlElem.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('etiqueta_theme', theme);
+
+        if (theme === 'dark') {
+            themeIcon.className = 'bi bi-sun-fill text-warning';
+            themeText.textContent = 'Modo Claro';
+            themeToggleBtn.classList.replace('btn-outline-secondary', 'btn-outline-warning');
+        } else {
+            themeIcon.className = 'bi bi-moon-stars-fill text-dark';
+            themeText.textContent = 'Modo Escuro';
+            themeToggleBtn.classList.replace('btn-outline-warning', 'btn-outline-secondary');
+        }
+    }
+
+    // Carrega tema preferido salvo ou padrão claro
+    const savedTheme = localStorage.getItem('etiqueta_theme') || 'light';
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener('click', function() {
+        const currentTheme = htmlElem.getAttribute('data-bs-theme');
+        applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // -------------------------------------------------------------
+    // PRÉ-VISUALIZAÇÃO DO LOGOTIPO
+    // -------------------------------------------------------------
+    const logoInput = document.getElementById('logoInput');
+    const logoPreview = document.getElementById('logoPreview');
+    logoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoPreview.src = e.target.result;
+                logoPreview.style.display = 'inline-block';
+            }
+            reader.readAsDataURL(file);
+        } else {
+            logoPreview.style.display = 'none';
+        }
+    });
+
+    // -------------------------------------------------------------
+    // MÁSCARAS AUTOMÁTICAS E RESTRIÇÕES
+    // -------------------------------------------------------------
+    // 1. CNPJ: 00.000.000/0000-00 (máximo 14 dígitos numéricos)
+    document.querySelectorAll('.cnpj-mask').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 14);
+            v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+            v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            v = v.replace(/(\d{4})(\d)/, '$1-$2');
+            e.target.value = v;
+        });
+    });
+
+    // 2. CEP: 00000-000 (máximo 8 dígitos numéricos)
+    document.querySelectorAll('.cep-mask').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 8);
+            v = v.replace(/^(\d{5})(\d)/, '$1-$2');
+            e.target.value = v;
+        });
+    });
+
+    // 3. Telefone: (00) 0 0000-0000 (máximo 11 dígitos numéricos)
+    document.querySelectorAll('.fone-mask').forEach(input => {
+        input.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 11);
+            if (v.length > 10) {
+                v = v.replace(/^(\d{2})(\d)(\d{4})(\d{4})$/, '($1) $2 $3-$4');
+            } else if (v.length > 6) {
+                v = v.replace(/^(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+            } else if (v.length > 2) {
+                v = v.replace(/^(\d{2})(\d+)/, '($1) $2');
+            } else if (v.length > 0) {
+                v = v.replace(/^(\d{0,2})/, '($1');
+            }
+            e.target.value = v;
+        });
+    });
+
+    // 4. Somente números (Nota Fiscal)
+    document.querySelectorAll('.only-numbers').forEach(input => {
+        input.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    });
+</script>
+</body>
+</html>

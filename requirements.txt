@@ -1,0 +1,5 @@
+Flask>=3.0.3
+reportlab>=4.2.0
+Pillow>=10.0.0
+Flask-HTTPAuth>=4.8.0
+gunicorn>=21.2.0
