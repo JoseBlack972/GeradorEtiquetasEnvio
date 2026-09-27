@@ -31,3 +31,4 @@ git push -u origin main
    - `APP_PASSWORD`: Senha segura de acesso (padrão se vazio: `admin123`)
    - `SECRET_KEY`: Uma sequência de caracteres aleatórios para segurança da sessão Flask
 6. Clique em **Create Web Service**.
+# gerador_de_etiquetas
